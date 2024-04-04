@@ -34,8 +34,13 @@ def quizmaking():
             conn.commit()
             # OPTION 테이블에 값 넣기
             for x in range(question_type):
+                sql = "SELECT COUNT(OPTION_ID) FROM `OPTION`"
+                cursor.execute(sql)
+                number = cursor.fetchall()
+                number = int(number[0][0])
+
                 sql = "INSERT INTO `OPTION` (`OPTION_ID`,`QUES_ID`,`NUMBER`,`OPTION`,`ANSWER`) VALUES (%s, %s, %s, %s, %s) "
-                cursor.execute(sql, (f'OPTION_{x+1}', f'QUES_{i+1}', x+1 ,list_quiz[i]['choice'][x], list_quiz[i]["answer"]))
+                cursor.execute(sql, (f'OPTION_{number+1}', f'QUES_{i+1}', x+1 ,list_quiz[i]['choice'][x], list_quiz[i]["answer"]))
                 conn.commit()
         # Read
         sql = "SELECT * FROM TableName"
