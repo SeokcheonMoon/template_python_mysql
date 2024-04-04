@@ -44,7 +44,7 @@ def quizmaking():
         for row in data:
             print(row)  # 각 행 출력     
     conn.close()             
-    return list_quiz, question_type
+    return list_quiz
 
 # try:
 #     list_quiz,question_type = quizmaking()
