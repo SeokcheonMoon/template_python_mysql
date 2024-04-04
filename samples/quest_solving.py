@@ -49,6 +49,30 @@ def answermaking(list_quiz):
         # 사용자 답안 딕셔너리에 저장
         dic_user['user_answer'] = list_answer  
         
+        ## mysql에 입력
+        try : 
+            with conn.cursor() as cursor:
+            # USER 테이블에 값 넣기 
+                for x in range(len(list_user_answer)):
+                    sql = "INSERT INTO USER (USER_ID,USER_NAME) VALUES (%s, %s)"
+                    cursor.execute(sql, (f'USER_{x+1}',list_user_answer[x]['user_name']))
+                    conn.commit()
+
+                    # ANSWER 테이블에 값 넣기
+                    for y in range(len(list_user_answer[x]['user_answer'])):
+                        sql = "INSERT INTO ANSWER (ANSWER_ID, OPTION_ID, QUES_ID, USER_ID) VALUES (%s, %s, %s, %s)"
+                        cursor.execute(sql, (f'ANSWER_{y+1}',f'OPTION_{list_user_answer[x]["user_answer"][y]}', f'QUES_{y+1}',f'USER_{x+1}'))
+                        conn.commit()
+        finally :
+            conn.close()
+
+        # Read
+        sql = "SELECT * FROM TableName"
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        for row in data:
+            print(row)  # 각 행 출력
+
         # 사용자 이름과 답안이 저장된 딕셔너리를 리스트에 추가
         list_user_answer.append(dic_user)  
         quit_input = input("다음 응시자가 있나요? (계속: c, 종료: x): ").lower()
@@ -58,39 +82,3 @@ def answermaking(list_quiz):
         elif quit_input == 'c':  # 'c'를 입력하면
             continue  # 다음 사용자를 위해 루프 계속
 
-
-try:
-
-    list_user_answer=answermaking(list_quiz)
-
-    with conn.cursor() as cursor:
-        # USER 테이블에 값 넣기 
-        for x in range(len(list_user_answer)):
-            sql = "INSERT INTO USER (USER_ID,USER_NAME) VALUES (%s, %s)"
-            cursor.execute(sql, (f'USER_{x+1}',list_user_answer[x]['user_name']))
-            conn.commit()
-
-            # ANSWER 테이블에 값 넣기
-            for y in range(len(list_user_answer[x]['user_answer'])):
-                sql = "INSERT INTO ANSWER (ANSWER_ID, OPTION_ID, QUES_ID, USER_ID) VALUES (%s, %s, %s, %s)"
-                cursor.execute(sql, (f'ANSWER_{y+1}',f'OPTION_{list_user_answer[x]["user_answer"][y]}', f'QUES_{y+1}',f'USER_{x+1}'))
-                conn.commit()
-
-        # Read
-        sql = "SELECT * FROM TableName"
-        cursor.execute(sql)
-        data = cursor.fetchall()
-        for row in data:
-            print(row)  # 각 행 출력
-
-        # # Update
-        # sql = "UPDATE TableName SET column1=%s WHERE pk_id=%s"
-        # cursor.execute(sql, ('newvalue1', 1))
-        # conn.commit()
-
-        # # Delete
-        # sql = "DELETE FROM TableName WHERE pk_id=%s"
-        # cursor.execute(sql, (1,))
-        # conn.commit()
-finally:
-    conn.close()
