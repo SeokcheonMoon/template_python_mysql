@@ -32,12 +32,12 @@ def quizmaking():
         for i in range(len(list_quiz)):
             pk_quest = f'QUES_{i+1}'
             sql = "INSERT INTO QUEST (PK_QUEST, QUESTION, SCORE, `FK_QUEST`) VALUES (%s, %s, %s, %s)"
-            cursor.execute(sql, (pk_quest, list_quiz[i]['question'], list_quiz[i]["score"], ""))
+            cursor.execute(sql, (pk_quest, list_quiz[i]['question'], list_quiz[i]["score"], pk_quest))
             conn.commit()
             # OPTION 테이블에 값 넣기
             for x in range(min(question_type, len(list_quiz[i]['choice']))):
-                sql = "INSERT INTO `QUEST` (`NUMBER`, `OPTION`, `FK_QUEST`) VALUES (%s, %s, %s) "
-                cursor.execute(sql, (x+1, list_quiz[i]['choice'][x], pk_quest))
+                sql = "INSERT INTO `QUEST` (`NUMBER`, `OPTION`) VALUES (%s, %s) "
+                cursor.execute(sql, (x+1, list_quiz[i]['choice'][x]))
 
         # for i in range(len(list_quiz)):
         #     pk_quest = f'QUES_{i+1}'
